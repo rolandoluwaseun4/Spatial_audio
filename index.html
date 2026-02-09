@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spatial Audio Player Pro - 8D Hi-Res Experience</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-trail"></div>
+    
+    <!-- Background -->
+    <div class="background-gradient" id="bgGradient"></div>
+    <div class="particles" id="particles"></div>
+    <div class="album-blur-bg" id="albumBlurBg"></div>
+    
+    <!-- Welcome Tutorial Overlay -->
+    <div class="tutorial-overlay" id="tutorialOverlay">
+        <div class="tutorial-card glass-card">
+            <h2>🎵 Welcome to Spatial Audio Player Pro</h2>
+            <div class="tutorial-content" id="tutorialContent">
+                <div class="tutorial-step active" data-step="1">
+                    <div class="step-icon">📤</div>
+                    <h3>Upload Your Music</h3>
+                    <p>Drag & drop or click to upload your favorite tracks in MP3, WAV, or FLAC format</p>
+                </div>
+                <div class="tutorial-step" data-step="2">
+                    <div class="step-icon">🎛️</div>
+                    <h3>Apply Effects</h3>
+                    <p>Experience 8D audio, reverb, spatial sound, and customize with our 5-band equalizer</p>
+                </div>
+                <div class="tutorial-step" data-step="3">
+                    <div class="step-icon">🎨</div>
+                    <h3>Customize Everything</h3>
+                    <p>Choose visualizer modes, themes, presets, and more for your perfect listening experience</p>
+                </div>
+            </div>
+            <div class="tutorial-controls">
+                <button class="btn-secondary" id="skipTutorial">Skip</button>
+                <div class="tutorial-dots">
+                    <span class="dot active" data-step="1"></span>
+                    <span class="dot" data-step="2"></span>
+                    <span class="dot" data-step="3"></span>
+                </div>
+                <button class="btn-primary" id="nextTutorial">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Overlay -->
+    <div class="shortcuts-overlay" id="shortcutsOverlay">
+        <div class="shortcuts-panel glass-card">
+            <h3>⌨️ Keyboard Shortcuts</h3>
+            <div class="shortcuts-grid">
+                <div class="shortcut-item">
+                    <kbd>Space</kbd>
+                    <span>Play / Pause</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>←</kbd>
+                    <span>Seek Backward</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>→</kbd>
+                    <span>Seek Forward</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>↑</kbd>
+                    <span>Volume Up</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>↓</kbd>
+                    <span>Volume Down</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>M</kbd>
+                    <span>Mute / Unmute</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>N</kbd>
+                    <span>Next Track</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>P</kbd>
+                    <span>Previous Track</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>S</kbd>
+                    <span>Toggle Shuffle</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>R</kbd>
+                    <span>Toggle Repeat</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>V</kbd>
+                    <span>Change Visualizer</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>?</kbd>
+                    <span>Show Shortcuts</span>
+                </div>
+            </div>
+            <button class="btn-close" id="closeShortcuts">✕</button>
+        </div>
+    </div>
+
+    <!-- Mini Player (Floating) -->
+    <div class="mini-player glass-card" id="miniPlayer" style="display: none;">
+        <div class="mini-album-art">
+            <img id="miniAlbumArt" src="" alt="">
+            <div class="mini-play-overlay" id="miniPlayBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+            </div>
+        </div>
+        <div class="mini-info">
+            <div class="mini-title" id="miniTitle">No Track</div>
+            <div class="mini-artist" id="miniArtist">-</div>
+        </div>
+        <div class="mini-controls">
+            <button class="mini-btn" id="miniPrevBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                    <rect x="5" y="4" width="2" height="16"></rect>
+                </svg>
+            </button>
+            <button class="mini-btn" id="miniNextBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                    <rect x="17" y="4" width="2" height="16"></rect>
+                </svg>
+            </button>
+            <button class="mini-btn" id="expandPlayer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <polyline points="9 21 3 21 3 15"></polyline>
+                    <line x1="21" y1="3" x2="14" y2="10"></line>
+                    <line x1="3" y1="21" x2="10" y2="14"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer">
+        <!-- Header -->
+        <header class="glass-card header">
+            <h1>🎵 Spatial Audio Player Pro</h1>
+            <p>Experience Your Music in 8D Hi-Res Quality</p>
+            <div class="header-actions">
+                <button class="icon-btn glass-inner" id="themeBtn" title="Change Theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <button class="icon-btn glass-inner" id="performanceBtn" title="Performance Mode">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                </button>
+                <button class="icon-btn glass-inner" id="shortcutsBtn" title="Keyboard Shortcuts">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                        <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h8M6 16h12"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Theme Selector -->
+        <div class="theme-selector glass-card" id="themeSelector" style="display: none;">
+            <h3>🎨 Choose Theme</h3>
+            <div class="theme-grid">
+                <div class="theme-option" data-theme="blue">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #0066ff, #0099ff);"></div>
+                    <span>Ocean Blue</span>
+                </div>
+                <div class="theme-option" data-theme="purple">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #6366f1, #a855f7);"></div>
+                    <span>Purple Haze</span>
+                </div>
+                <div class="theme-option" data-theme="pink">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #ec4899, #f97316);"></div>
+                    <span>Sunset Pink</span>
+                </div>
+                <div class="theme-option" data-theme="green">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #10b981, #3b82f6);"></div>
+                    <span>Aurora Green</span>
+                </div>
+                <div class="theme-option" data-theme="orange">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #f59e0b, #ef4444);"></div>
+                    <span>Fire Orange</span>
+                </div>
+                <div class="theme-option" data-theme="cyan">
+                    <div class="theme-preview" style="background: linear-gradient(135deg, #06b6d4, #8b5cf6);"></div>
+                    <span>Cyber Cyan</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="glass-card upload-section" id="uploadSection">
+            <div class="upload-area" id="uploadArea">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <h2>Upload Your Music</h2>
+                <p>Drag & drop or click to browse</p>
+                <p class="supported-formats">Supports: MP3, WAV, FLAC, OGG • Multiple files supported</p>
+                <input type="file" id="audioFile" accept="audio/*" multiple hidden>
+            </div>
+        </div>
+
+        <!-- Playlist Section -->
+        <div class="glass-card playlist-section" id="playlistSection" style="display: none;">
+            <div class="playlist-header">
+                <h3>📝 Playlist</h3>
+                <div class="playlist-actions">
+                    <button class="icon-btn glass-inner" id="clearPlaylist" title="Clear All">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn glass-inner" id="addMore" title="Add More">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="playlist-items" id="playlistItems"></div>
+        </div>
+
+        <!-- Player Section -->
+        <div class="glass-card player-section" id="playerSection" style="display: none;">
+            <!-- Album Art & Visualizer -->
+            <div class="media-container">
+                <div class="album-art-container" id="albumArtContainer">
+                    <img id="albumArt" src="" alt="Album Art">
+                    <div class="album-art-placeholder">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div class="vinyl-record" id="vinylRecord">
+                        <div class="vinyl-inner"></div>
+                    </div>
+                </div>
+
+                <!-- Visualizer Mode Selector -->
+                <div class="visualizer-controls glass-inner">
+                    <button class="visualizer-mode-btn active" data-mode="bars">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="3" y="10" width="4" height="11"></rect>
+                            <rect x="10" y="6" width="4" height="15"></rect>
+                            <rect x="17" y="3" width="4" height="18"></rect>
+                        </svg>
+                    </button>
+                    <button class="visualizer-mode-btn" data-mode="circular">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="6"></circle>
+                        </svg>
+                    </button>
+                    <button class="visualizer-mode-btn" data-mode="wave">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 12 Q 6 8, 10 12 T 18 12 T 22 12"></path>
+                        </svg>
+                    </button>
+                    <button class="visualizer-mode-btn" data-mode="particles">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="6" cy="6" r="2"></circle>
+                            <circle cx="18" cy="6" r="2"></circle>
+                            <circle cx="6" cy="18" r="2"></circle>
+                            <circle cx="18" cy="18" r="2"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="visualizer-container glass-inner">
+                    <canvas id="visualizer"></canvas>
+                    <div class="audio-quality-badge">Hi-Res Audio</div>
+                    <div class="fps-counter" id="fpsCounter" style="display: none;">60 FPS</div>
+                </div>
+            </div>
+
+            <!-- Song Info -->
+            <div class="song-info">
+                <h2 id="songTitle">Unknown Track</h2>
+                <p id="songArtist">Unknown Artist</p>
+                <div class="song-stats glass-inner" id="songStats">
+                    <span id="bitrate">-</span>
+                    <span id="sampleRate">-</span>
+                    <span id="channels">-</span>
+                </div>
+            </div>
+
+            <!-- Waveform Preview -->
+            <div class="waveform-container glass-inner">
+                <canvas id="waveformCanvas"></canvas>
+                <div class="waveform-progress" id="waveformProgress"></div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container glass-inner">
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <div class="progress-handle" id="progressHandle"></div>
+                </div>
+            </div>
+
+            <!-- Player Controls -->
+            <div class="player-controls">
+                <button class="control-btn glass-inner" id="shuffleBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 3 21 3 21 8"></polyline>
+                        <line x1="4" y1="20" x2="21" y2="3"></line>
+                        <polyline points="21 16 21 21 16 21"></polyline>
+                        <line x1="15" y1="15" x2="21" y2="21"></line>
+                        <line x1="4" y1="4" x2="9" y2="9"></line>
+                    </svg>
+                </button>
+                <button class="control-btn glass-inner" id="prevBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                        <rect x="5" y="4" width="2" height="16"></rect>
+                    </svg>
+                </button>
+                <button class="control-btn play-btn glass-inner" id="playBtn">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" id="playIcon">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" id="pauseIcon" style="display: none;">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                </button>
+                <button class="control-btn glass-inner" id="nextBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                        <rect x="17" y="4" width="2" height="16"></rect>
+                    </svg>
+                </button>
+                <button class="control-btn glass-inner" id="repeatBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="17 1 21 5 17 9"></polyline>
+                        <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                        <polyline points="7 23 3 19 7 15"></polyline>
+                        <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Volume Control -->
+            <div class="volume-control glass-inner">
+                <button id="muteBtn" class="icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="volumeIcon">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="muteIcon" style="display: none;">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <line x1="23" y1="9" x2="17" y2="15"></line>
+                        <line x1="17" y1="9" x2="23" y2="15"></line>
+                    </svg>
+                </button>
+                <input type="range" id="volumeSlider" min="0" max="100" value="70" class="slider">
+                <span id="volumeValue">70%</span>
+            </div>
+        </div>
+
+        <!-- Pitch & Tempo Controls -->
+        <div class="glass-card 
